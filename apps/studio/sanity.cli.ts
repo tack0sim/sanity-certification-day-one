@@ -9,10 +9,7 @@ export default defineCliConfig({
     port: 3334,
   },
   deployment: {
-    /**
-     * Enable auto-updates for studios.
-     * Learn more at https://www.sanity.io/docs/cli#auto-updates
-     */
+    appId: 'ssb668i65dfuhr0vcak6p8f7',
     autoUpdates: true,
   },
 })
