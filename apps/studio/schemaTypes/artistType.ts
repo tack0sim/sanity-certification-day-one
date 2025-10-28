@@ -16,6 +16,7 @@ export const artistType = defineType({
     defineField({
       name: 'photo',
       type: 'image',
+      options: {hotspot: true},
     }),
   ],
 })
