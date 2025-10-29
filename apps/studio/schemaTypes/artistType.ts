@@ -10,6 +10,7 @@ export const artistType = defineType({
     defineField({
       name: 'name',
       type: 'string',
+      validation: (rule) => rule.required().error('Name of artist is required'),
     }),
     defineField({
       name: 'description',

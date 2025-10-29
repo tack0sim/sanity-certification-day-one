@@ -10,6 +10,7 @@ export const eventType = defineType({
     {name: 'details', title: 'Details'},
     {name: 'editorial', title: 'Editorial'},
   ],
+  fieldsets: [{name: 'dates', title: 'Dates', options: {collapsible: true, columns: 2}}],
   fields: [
     defineField({
       name: 'name',
@@ -34,6 +35,20 @@ export const eventType = defineType({
       },
     }),
     defineField({
+      name: 'venue',
+      type: 'reference',
+      to: [{type: 'venue'}],
+      hidden: ({value, document}) => !value && document?.eventType === 'virtual',
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          if (value && context?.document?.eventType === 'virtual') {
+            return 'Only in-person events can have a venue'
+          }
+          return true
+        }),
+      group: 'details',
+    }),
+    defineField({
       name: 'date',
       type: 'datetime',
       group: 'details',
@@ -45,20 +60,7 @@ export const eventType = defineType({
       initialValue: 60,
       group: 'details',
     }),
-    defineField({
-      name: 'venue',
-      type: 'reference',
-      to: [{type: 'venue'}],
-      readOnly: ({value, document}) => !value && document?.eventType === 'virtual',
-      validation: (rule) =>
-        rule.custom((value, context) => {
-          if (value && context?.document?.eventType === 'virtual') {
-            return 'Only in-person events can have a venue'
-          }
-          return true
-        }),
-      group: 'details',
-    }),
+
     defineField({
       name: 'headline',
       group: 'details',
@@ -75,6 +77,11 @@ export const eventType = defineType({
       group: ['details', 'editorial'],
       type: 'array',
       of: [{type: 'block'}],
+      validation: (rule) =>
+        rule
+          .min(100)
+          .max(500)
+          .warning('The Details field should have between 100 and 500 characters'),
     }),
     defineField({
       name: 'tickets',
@@ -83,10 +90,19 @@ export const eventType = defineType({
     }),
     defineField({
       name: 'firstPublished',
+      title: 'First published',
       type: 'datetime',
       group: 'details',
       description: 'Automatically set when first published',
       readOnly: true,
+      fieldset: 'dates',
+    }),
+    defineField({
+      name: 'createdAt',
+      title: 'Created at',
+      type: 'datetime',
+      group: 'details',
+      fieldset: 'dates',
     }),
   ],
   preview: {
