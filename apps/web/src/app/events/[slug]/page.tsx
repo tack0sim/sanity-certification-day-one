@@ -5,13 +5,13 @@ import Image from 'next/image';
 
 import { sanityFetch } from '@/sanity/live';
 import { urlFor } from '@/sanity/image';
-import { format } from 'path';
 
 const EVENT_QUERY = defineQuery(`*[
     _type == "event" &&
     slug.current == $slug
   ][0]{
   ...,
+  "eventType": coalesce(format, eventType),
   "date": coalesce(date, now()),
   "doorsOpen": coalesce(doorsOpen, 0),
   headline->,
