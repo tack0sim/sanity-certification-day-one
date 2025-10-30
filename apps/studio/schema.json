@@ -52,21 +52,34 @@
       "eventType": {
         "type": "objectAttribute",
         "value": {
-          "type": "string"
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "in-person"
+            },
+            {
+              "type": "string",
+              "value": "virtual"
+            }
+          ]
         },
         "optional": true
       },
-      "date": {
+      "format": {
         "type": "objectAttribute",
         "value": {
-          "type": "string"
-        },
-        "optional": true
-      },
-      "doorsOpen": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "number"
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "in-person"
+            },
+            {
+              "type": "string",
+              "value": "virtual"
+            }
+          ]
         },
         "optional": true
       },
@@ -97,6 +110,20 @@
             }
           },
           "dereferencesTo": "venue"
+        },
+        "optional": true
+      },
+      "date": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "doorsOpen": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
         },
         "optional": true
       },
@@ -379,6 +406,20 @@
         "optional": true
       },
       "tickets": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "firstPublished": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "createdAt": {
         "type": "objectAttribute",
         "value": {
           "type": "string"

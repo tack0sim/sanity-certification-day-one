@@ -21,15 +21,16 @@ export type Event = {
   _rev: string;
   name?: string;
   slug?: Slug;
-  eventType?: string;
-  date?: string;
-  doorsOpen?: number;
+  eventType?: "in-person" | "virtual";
+  format?: "in-person" | "virtual";
   venue?: {
     _ref: string;
     _type: "reference";
     _weak?: boolean;
     [internalGroqTypeReferenceTo]?: "venue";
   };
+  date?: string;
+  doorsOpen?: number;
   headline?: {
     _ref: string;
     _type: "reference";
@@ -67,6 +68,8 @@ export type Event = {
     _key: string;
   }>;
   tickets?: string;
+  firstPublished?: string;
+  createdAt?: string;
 };
 
 export type Artist = {
@@ -233,9 +236,8 @@ export type EVENT_QUERYResult = {
   _rev: string;
   name?: string;
   slug?: Slug;
-  eventType?: string;
-  date: string;
-  doorsOpen: number | 0;
+  eventType?: "in-person" | "virtual";
+  format?: "in-person" | "virtual";
   venue: {
     _id: string;
     _type: "venue";
@@ -246,6 +248,8 @@ export type EVENT_QUERYResult = {
     city?: string;
     country?: string;
   } | null;
+  date: string;
+  doorsOpen: number | 0;
   headline: {
     _id: string;
     _type: "artist";
@@ -298,6 +302,8 @@ export type EVENT_QUERYResult = {
     _key: string;
   }>;
   tickets?: string;
+  firstPublished?: string;
+  createdAt?: string;
 } | null;
 
 // Source: ../web/src/app/page.tsx
