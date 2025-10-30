@@ -51,6 +51,7 @@ export const eventType = defineType({
       title: 'Event Format',
       type: 'string',
       group: 'details',
+      validation: (rule) => rule.required(),
       options: {
         list: ['in-person', 'virtual'],
         layout: 'radio',
@@ -60,10 +61,10 @@ export const eventType = defineType({
       name: 'venue',
       type: 'reference',
       to: [{type: 'venue'}],
-      hidden: ({value, document}) => !value && document?.format === 'virtual',
+      hidden: ({value, document}) => !value && document?.eventType === 'virtual',
       validation: (rule) =>
         rule.custom((value, context) => {
-          if (value && context?.document?.format === 'virtual') {
+          if (value && context?.document?.eventType === 'virtual') {
             return 'Only in-person events can have a venue'
           }
           return true
