@@ -14,6 +14,14 @@ export default defineConfig({
 
   plugins: [structureTool({structure, defaultDocumentNode}), visionTool()],
 
+  tools: (prev, {currentUser}) => {
+    const isAdmin = currentUser?.roles.some((role) => role.name === 'administrator')
+    if (isAdmin) {
+      return prev
+    }
+    return prev.filter((tool) => tool.name !== 'vision')
+  },
+
   schema: {
     types: schemaTypes,
   },
