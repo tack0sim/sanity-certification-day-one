@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { defineQuery } from 'next-sanity';
-import { sanityFetch } from '@/sanity/lib/live';
+import { sanityFetch } from '@/sanity/lib/client'; // get sanityFetch from client.ts instead of live.ts for caching and revalidation
 
 const EVENTS_QUERY = defineQuery(`*[
   _type == "event"
@@ -9,7 +9,9 @@ const EVENTS_QUERY = defineQuery(`*[
 ]|order(date asc){_id, name, slug, date}`);
 
 export default async function IndexPage() {
-  const { data: events } = await sanityFetch({ query: EVENTS_QUERY });
+  const events = await sanityFetch({
+    query: EVENTS_QUERY,
+  });
 
   return (
     <main className="flex min-h-screen flex-col p-24 gap-12">
