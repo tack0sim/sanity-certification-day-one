@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { defineQuery } from 'next-sanity';
+import { Suspense } from 'react';
+
 import { sanityFetch } from '@/sanity/lib/live'; // get sanityFetch from live.ts instead of the sanityFetch helper function from client.ts for caching and revalidation, as well as live editing
 
 const EVENTS_QUERY = defineQuery(`*[
@@ -18,28 +20,30 @@ export default async function IndexPage() {
       <h1 className="text-4xl font-bold tracking-tighter text-gray-900 dark:text-white">
         Events
       </h1>
-      <ul className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-        {events.map((event) => (
-          <li
-            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm dark:shadow-gray-900/20"
-            key={event._id}
-          >
-            <Link
-              className="hover:underline block"
-              href={`/events/${event?.slug?.current}`}
+      <Suspense fallback={'Loading...'}>
+        <ul className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          {events.map((event) => (
+            <li
+              className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm dark:shadow-gray-900/20"
+              key={event._id}
             >
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {event?.name}
-              </h2>
-              {event?.date && (
-                <p className="text-gray-500 dark:text-gray-400">
-                  {new Date(event.date).toLocaleDateString()}
-                </p>
-              )}
-            </Link>
-          </li>
-        ))}
-      </ul>
+              <Link
+                className="hover:underline block"
+                href={`/events/${event?.slug?.current}`}
+              >
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {event?.name}
+                </h2>
+                {event?.date && (
+                  <p className="text-gray-500 dark:text-gray-400">
+                    {new Date(event.date).toLocaleDateString()}
+                  </p>
+                )}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Suspense>
     </main>
   );
 }
