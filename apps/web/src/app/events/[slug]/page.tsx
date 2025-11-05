@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { sanityFetch } from '@/sanity/lib/client'; // get sanityFetch from client.ts instead of live.ts for caching and revalidation
+import { sanityFetch } from '@/sanity/lib/live'; // get sanityFetch from live.ts instead of the sanityFetch helper function from client.ts for caching and revalidation, as well as live editing
 import { urlFor } from '@/sanity/lib/image';
 
 const EVENT_QUERY = defineQuery(`*[
@@ -22,7 +22,7 @@ export default async function EventPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const event = await sanityFetch({
+  const { data: event } = await sanityFetch({
     query: EVENT_QUERY,
     params: await params,
   });
