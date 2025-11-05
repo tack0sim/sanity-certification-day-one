@@ -4,6 +4,7 @@ import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
 import {structure} from './structure'
 import {defaultDocumentNode} from './structure/defaultDocumentNode'
+import {presentationTool} from 'sanity/presentation'
 
 export default defineConfig({
   name: 'default',
@@ -12,7 +13,18 @@ export default defineConfig({
   projectId: 'fk2hrasv',
   dataset: 'production',
 
-  plugins: [structureTool({structure, defaultDocumentNode}), visionTool()],
+  plugins: [
+    structureTool({structure, defaultDocumentNode}),
+    visionTool(),
+    presentationTool({
+      previewUrl: {
+        initial: 'http://localhost:3000',
+        previewMode: {
+          enable: '/api/draft-mode/enable',
+        },
+      },
+    }),
+  ],
 
   tools: (prev, {currentUser}) => {
     const isAdmin = currentUser?.roles.some((role) => role.name === 'administrator')

@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { sanityFetch } from '@/sanity/live';
-import { urlFor } from '@/sanity/image';
+import { sanityFetch } from '@/sanity/lib/live';
+import { urlFor } from '@/sanity/lib/image';
 
 const EVENT_QUERY = defineQuery(`*[
     _type == "event" &&
