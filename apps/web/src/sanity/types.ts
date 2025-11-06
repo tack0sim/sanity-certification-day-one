@@ -225,7 +225,17 @@ export type SanityAssetSourceData = {
 
 export type AllSanitySchemaTypes = Event | Artist | Venue | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
-// Source: ../web/src/app/events/[slug]/page.tsx
+// Source: ../web/src/app/page.tsx
+// Variable: EVENTS_QUERY
+// Query: *[  _type == "event"  && defined(slug.current)  && date > now()]|order(date asc){_id, name, slug, date}
+export type EVENTS_QUERYResult = Array<{
+  _id: string;
+  name: string | null;
+  slug: Slug | null;
+  date: string | null;
+}>;
+
+// Source: ../web/src/components/EventPageParentCard.tsx
 // Variable: EVENT_QUERY
 // Query: *[    _type == "event" &&    slug.current == $slug  ][0]{  ...,  "date": coalesce(date, now()),  "doorsOpen": coalesce(doorsOpen, 0),  headline->,  venue->}
 export type EVENT_QUERYResult = {
@@ -306,21 +316,11 @@ export type EVENT_QUERYResult = {
   createdAt?: string;
 } | null;
 
-// Source: ../web/src/app/page.tsx
-// Variable: EVENTS_QUERY
-// Query: *[  _type == "event"  && defined(slug.current)  && date > now()]|order(date asc){_id, name, slug, date}
-export type EVENTS_QUERYResult = Array<{
-  _id: string;
-  name: string | null;
-  slug: Slug | null;
-  date: string | null;
-}>;
-
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[\n    _type == \"event\" &&\n    slug.current == $slug\n  ][0]{\n  ...,\n  \"date\": coalesce(date, now()),\n  \"doorsOpen\": coalesce(doorsOpen, 0),\n  headline->,\n  venue->\n}": EVENT_QUERYResult;
     "*[\n  _type == \"event\"\n  && defined(slug.current)\n  && date > now()\n]|order(date asc){_id, name, slug, date}": EVENTS_QUERYResult;
+    "*[\n    _type == \"event\" &&\n    slug.current == $slug\n  ][0]{\n  ...,\n  \"date\": coalesce(date, now()),\n  \"doorsOpen\": coalesce(doorsOpen, 0),\n  headline->,\n  venue->\n}": EVENT_QUERYResult;
   }
 }
