@@ -1,3 +1,5 @@
+// deprecated script! Incorporated in custom function at ./functions/details-script
+
 import {getCliClient} from 'sanity/cli'
 
 const client = getCliClient({apiVersion: 'vX'})

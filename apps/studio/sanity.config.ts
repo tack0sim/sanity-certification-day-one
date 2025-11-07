@@ -5,6 +5,7 @@ import {schemaTypes} from './schemaTypes'
 import {structure} from './structure'
 import {defaultDocumentNode} from './structure/defaultDocumentNode'
 import {presentationTool} from 'sanity/presentation'
+import {assist} from '@sanity/assist'
 
 export default defineConfig({
   name: 'default',
@@ -16,6 +17,7 @@ export default defineConfig({
   plugins: [
     structureTool({structure, defaultDocumentNode}),
     visionTool(),
+    assist(),
     presentationTool({
       previewUrl: {
         initial: 'http://localhost:3000',

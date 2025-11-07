@@ -34,6 +34,17 @@ export const eventType = defineType({
       },
     }),
     defineField({
+      name: 'headline',
+      group: 'details',
+      type: 'reference',
+      to: [{type: 'artist'}],
+      options: {
+        aiAssist: {
+          embeddingsIndex: 'artist',
+        },
+      },
+    }),
+    defineField({
       name: 'eventType',
       type: 'string',
       group: 'details',
@@ -71,6 +82,11 @@ export const eventType = defineType({
           return true
         }),
       group: 'details',
+      options: {
+        aiAssist: {
+          embeddingsIndex: 'venue',
+        },
+      },
     }),
     defineField({
       name: 'date',
@@ -87,13 +103,6 @@ export const eventType = defineType({
         input: DoorsOpenInput,
       },
     }),
-
-    defineField({
-      name: 'headline',
-      group: 'details',
-      type: 'reference',
-      to: [{type: 'artist'}],
-    }),
     defineField({
       name: 'image',
       group: ['details', 'editorial'],
@@ -106,9 +115,9 @@ export const eventType = defineType({
       of: [{type: 'block'}],
       validation: (rule) =>
         rule
-          .min(100)
-          .max(500)
-          .warning('The Details field should have between 100 and 500 characters'),
+          .min(500)
+          .max(1000)
+          .warning('The Details field should have between 500 and 1000 characters'),
     }),
     defineField({
       name: 'tickets',
