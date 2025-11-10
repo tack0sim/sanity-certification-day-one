@@ -5,19 +5,19 @@ import {schemaTypes} from './schemaTypes'
 import {structure} from './structure'
 import {defaultDocumentNode} from './structure/defaultDocumentNode'
 import {presentationTool} from 'sanity/presentation'
-import {assist} from '@sanity/assist'
+// import {assist} from '@sanity/assist'
 
 export default defineConfig({
   name: 'default',
   title: 'Day One Content Operations',
 
-  projectId: 'fk2hrasv',
-  dataset: 'production',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
+  dataset: process.env.SANITY_STUDIO_DATASET!,
 
   plugins: [
     structureTool({structure, defaultDocumentNode}),
     visionTool(),
-    assist(),
+    // assist(),
     presentationTool({
       previewUrl: {
         initial: 'http://localhost:3000',

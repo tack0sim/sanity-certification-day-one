@@ -21,6 +21,12 @@ export type Event = {
   _rev: string;
   name?: string;
   slug?: Slug;
+  headline?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "artist";
+  };
   eventType?: "in-person" | "virtual";
   format?: "in-person" | "virtual";
   venue?: {
@@ -31,12 +37,6 @@ export type Event = {
   };
   date?: string;
   doorsOpen?: number;
-  headline?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "artist";
-  };
   image?: {
     asset?: {
       _ref: string;
@@ -72,6 +72,17 @@ export type Event = {
   createdAt?: string;
 };
 
+export type Venue = {
+  _id: string;
+  _type: "venue";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  city?: string;
+  country?: string;
+};
+
 export type Artist = {
   _id: string;
   _type: "artist";
@@ -92,17 +103,6 @@ export type Artist = {
     crop?: SanityImageCrop;
     _type: "image";
   };
-};
-
-export type Venue = {
-  _id: string;
-  _type: "venue";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name?: string;
-  city?: string;
-  country?: string;
 };
 
 export type SanityImagePaletteSwatch = {
@@ -223,7 +223,7 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = Event | Artist | Venue | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = Event | Venue | Artist | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ../web/src/app/page.tsx
 // Variable: EVENTS_QUERY
@@ -246,20 +246,6 @@ export type EVENT_QUERYResult = {
   _rev: string;
   name?: string;
   slug?: Slug;
-  eventType?: "in-person" | "virtual";
-  format?: "in-person" | "virtual";
-  venue: {
-    _id: string;
-    _type: "venue";
-    _createdAt: string;
-    _updatedAt: string;
-    _rev: string;
-    name?: string;
-    city?: string;
-    country?: string;
-  } | null;
-  date: string;
-  doorsOpen: number | 0;
   headline: {
     _id: string;
     _type: "artist";
@@ -281,6 +267,20 @@ export type EVENT_QUERYResult = {
       _type: "image";
     };
   } | null;
+  eventType?: "in-person" | "virtual";
+  format?: "in-person" | "virtual";
+  venue: {
+    _id: string;
+    _type: "venue";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    name?: string;
+    city?: string;
+    country?: string;
+  } | null;
+  date: string;
+  doorsOpen: number | 0;
   image?: {
     asset?: {
       _ref: string;

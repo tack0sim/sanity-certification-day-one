@@ -49,6 +49,36 @@
         },
         "optional": true
       },
+      "headline": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "object",
+          "attributes": {
+            "_ref": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              }
+            },
+            "_type": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string",
+                "value": "reference"
+              }
+            },
+            "_weak": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "boolean"
+              },
+              "optional": true
+            }
+          },
+          "dereferencesTo": "artist"
+        },
+        "optional": true
+      },
       "eventType": {
         "type": "objectAttribute",
         "value": {
@@ -124,36 +154,6 @@
         "type": "objectAttribute",
         "value": {
           "type": "number"
-        },
-        "optional": true
-      },
-      "headline": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "object",
-          "attributes": {
-            "_ref": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string"
-              }
-            },
-            "_type": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "string",
-                "value": "reference"
-              }
-            },
-            "_weak": {
-              "type": "objectAttribute",
-              "value": {
-                "type": "boolean"
-              },
-              "optional": true
-            }
-          },
-          "dereferencesTo": "artist"
         },
         "optional": true
       },
@@ -429,6 +429,64 @@
     }
   },
   {
+    "name": "venue",
+    "type": "document",
+    "attributes": {
+      "_id": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "_type": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string",
+          "value": "venue"
+        }
+      },
+      "_createdAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "_updatedAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "_rev": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "name": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "city": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "country": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      }
+    }
+  },
+  {
     "name": "artist",
     "type": "document",
     "attributes": {
@@ -543,64 +601,6 @@
               }
             }
           }
-        },
-        "optional": true
-      }
-    }
-  },
-  {
-    "name": "venue",
-    "type": "document",
-    "attributes": {
-      "_id": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string"
-        }
-      },
-      "_type": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string",
-          "value": "venue"
-        }
-      },
-      "_createdAt": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string"
-        }
-      },
-      "_updatedAt": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string"
-        }
-      },
-      "_rev": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string"
-        }
-      },
-      "name": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string"
-        },
-        "optional": true
-      },
-      "city": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string"
-        },
-        "optional": true
-      },
-      "country": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string"
         },
         "optional": true
       }

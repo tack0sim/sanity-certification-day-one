@@ -38,11 +38,11 @@ export const eventType = defineType({
       group: 'details',
       type: 'reference',
       to: [{type: 'artist'}],
-      options: {
-        aiAssist: {
-          embeddingsIndex: 'artist',
-        },
-      },
+      // options: {
+      //   aiAssist: {
+      //     embeddingsIndex: 'artist',
+      //   },
+      // },
     }),
     defineField({
       name: 'eventType',
@@ -82,11 +82,11 @@ export const eventType = defineType({
           return true
         }),
       group: 'details',
-      options: {
-        aiAssist: {
-          embeddingsIndex: 'venue',
-        },
-      },
+      // options: {
+      //   aiAssist: {
+      //     embeddingsIndex: 'venue',
+      //   },
+      // },
     }),
     defineField({
       name: 'date',
