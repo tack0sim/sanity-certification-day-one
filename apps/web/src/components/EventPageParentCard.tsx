@@ -1,22 +1,12 @@
-import { defineQuery, PortableText } from 'next-sanity';
+import { PortableText } from 'next-sanity';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Suspense } from 'react';
 
 import { sanityFetch } from '@/sanity/lib/live'; // get sanityFetch from live.ts instead of the sanityFetch helper function from client.ts for caching and revalidation, as well as live editing
+import { EVENT_QUERY } from '@/sanity/lib/queries';
 import { urlFor } from '@/sanity/lib/image';
-
-const EVENT_QUERY = defineQuery(`*[
-    _type == "event" &&
-    slug.current == $slug
-  ][0]{
-  ...,
-  "date": coalesce(date, now()),
-  "doorsOpen": coalesce(doorsOpen, 0),
-  headline->,
-  venue->
-}`);
 
 export default async function EventPageParentCard({
   params,

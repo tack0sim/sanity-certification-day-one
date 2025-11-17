@@ -1,21 +1,15 @@
 import Link from 'next/link';
-import { defineQuery } from 'next-sanity';
 import { Suspense } from 'react';
 
 import { sanityFetch } from '@/sanity/lib/live'; // get sanityFetch from live.ts instead of the sanityFetch helper function from client.ts for caching and revalidation, as well as live editing
 import { cacheLife } from 'next/cache';
-
-const EVENTS_QUERY = defineQuery(`*[
-  _type == "event"
-  && defined(slug.current)
-  && date > now()
-]|order(date asc){_id, name, slug, date}`);
+import { HOMEPAGE_EVENTS_QUERY } from '../sanity/lib/queries';
 
 export default async function IndexPage() {
   'use cache: private'; // 'use cache' does not work because of runtime data such as cookies()
   cacheLife({ stale: 60 });
   const { data: events } = await sanityFetch({
-    query: EVENTS_QUERY,
+    query: HOMEPAGE_EVENTS_QUERY,
   });
 
   return (

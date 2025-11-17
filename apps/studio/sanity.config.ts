@@ -1,10 +1,11 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
-import {schemaTypes} from './schemaTypes'
+import {schema} from './schemaTypes'
 import {structure} from './structure'
 import {defaultDocumentNode} from './structure/defaultDocumentNode'
 import {presentationTool} from 'sanity/presentation'
+import {resolve} from './presentation/resolve'
 // import {assist} from '@sanity/assist'
 
 export default defineConfig({
@@ -13,12 +14,14 @@ export default defineConfig({
 
   projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
   dataset: process.env.SANITY_STUDIO_DATASET!,
+  schema,
 
   plugins: [
     structureTool({structure, defaultDocumentNode}),
     visionTool(),
     // assist(),
     presentationTool({
+      resolve,
       previewUrl: {
         initial: 'http://localhost:3000',
         previewMode: {
@@ -34,10 +37,6 @@ export default defineConfig({
       return prev
     }
     return prev.filter((tool) => tool.name !== 'vision')
-  },
-
-  schema: {
-    types: schemaTypes,
   },
 
   deployment: {
