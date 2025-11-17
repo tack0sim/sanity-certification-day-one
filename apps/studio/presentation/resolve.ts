@@ -1,21 +1,24 @@
-import {defineLocations, PresentationPluginOptions} from 'sanity/presentation'
+import {
+	defineLocations,
+	type PresentationPluginOptions,
+} from 'sanity/presentation';
 
 export const resolve: PresentationPluginOptions['resolve'] = {
-  locations: {
-    // ...other locations
-    page: defineLocations({
-      select: {
-        title: 'title',
-        slug: 'slug.current',
-      },
-      resolve: (doc) => ({
-        locations: [
-          {
-            title: doc?.title || 'Untitled',
-            href: `/${doc?.slug}`,
-          },
-        ],
-      }),
-    }),
-  },
-}
+	locations: {
+		// ...other locations
+		page: defineLocations({
+			select: {
+				title: 'title',
+				slug: 'slug.current',
+			},
+			resolve: (doc) => ({
+				locations: [
+					{
+						title: doc?.title || 'Untitled',
+						href: `/${doc?.slug}`,
+					},
+				],
+			}),
+		}),
+	},
+};

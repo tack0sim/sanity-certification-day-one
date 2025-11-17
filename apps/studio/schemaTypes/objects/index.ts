@@ -1,4 +1,4 @@
-import {SchemaTypeDefinition} from 'sanity'
-import {pageBuilder} from './pageBuilder'
+import type { SchemaTypeDefinition } from 'sanity';
+import { pageBuilder } from './pageBuilder';
 
-export const objects: SchemaTypeDefinition[] = [pageBuilder]
+export const objects: SchemaTypeDefinition[] = [pageBuilder];

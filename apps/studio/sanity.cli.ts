@@ -1,16 +1,16 @@
-import {defineCliConfig} from 'sanity/cli'
+import { defineCliConfig } from 'sanity/cli';
 
 export default defineCliConfig({
-  api: {
-    projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
-    dataset: process.env.SANITY_STUDIO_DATASET!,
-  },
-  studioHost: process.env.SANITY_STUDIO_HOSTNAME!,
-  server: {
-    port: 3334,
-  },
-  deployment: {
-    appId: 'ssb668i65dfuhr0vcak6p8f7',
-    autoUpdates: true,
-  },
-})
+	api: {
+		projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
+		dataset: process.env.SANITY_STUDIO_DATASET!,
+	},
+	studioHost: process.env.SANITY_STUDIO_HOSTNAME!,
+	server: {
+		port: 3334,
+	},
+	deployment: {
+		appId: 'ssb668i65dfuhr0vcak6p8f7',
+		autoUpdates: true,
+	},
+});

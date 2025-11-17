@@ -1,19 +1,19 @@
-import {defineConfig} from 'sanity'
-import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
+import {defineConfig} from 'sanity'
+import {presentationTool} from 'sanity/presentation'
+import {structureTool} from 'sanity/structure'
+import {resolve} from './presentation/resolve'
 import {schema} from './schemaTypes'
 import {structure} from './structure'
 import {defaultDocumentNode} from './structure/defaultDocumentNode'
-import {presentationTool} from 'sanity/presentation'
-import {resolve} from './presentation/resolve'
 // import {assist} from '@sanity/assist'
 
 export default defineConfig({
   name: 'default',
   title: 'Day One Content Operations',
 
-  projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
-  dataset: process.env.SANITY_STUDIO_DATASET!,
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID,
+  dataset: process.env.SANITY_STUDIO_DATASET,
   schema,
 
   plugins: [
