@@ -1,5 +1,8 @@
-import {artistType} from './artistType'
-import {eventType} from './eventType'
-import {venueType} from './venueType'
+import type { SchemaTypeDefinition } from 'sanity';
+import { pageBuilderBlocks } from './blocks';
+import { documents } from './documents';
+import { objects } from './objects';
 
-export const schemaTypes = [eventType, artistType, venueType]
+export const schema: { types: SchemaTypeDefinition[] } = {
+	types: [...documents, ...objects, ...pageBuilderBlocks],
+};

@@ -1,46 +1,47 @@
 {
-  "name": "day-one-content-operations",
-  "private": true,
-  "version": "1.0.0",
-  "main": "package.json",
-  "license": "UNLICENSED",
-  "scripts": {
-    "dev": "sanity dev",
-    "start": "sanity start",
-    "build": "sanity build",
-    "deploy": "sanity deploy",
-    "deploy-graphql": "sanity graphql deploy",
-    "predev": "pnpm run typegen --enforce-required-fields",
-    "prebuild": "pnpm run typegen --enforce-required-fields",
-    "typegen": "sanity schema extract && sanity typegen generate --enforce-required-fields"
-  },
-  "keywords": [
-    "sanity"
-  ],
-  "dependencies": {
-    "@sanity/client": "^7.12.0",
-    "@sanity/icons": "^3.7.4",
-    "@sanity/ui": "^2.16.22",
-    "@sanity/vision": "^4.13.0",
-    "react": "^19.1",
-    "react-dom": "^19.1",
-    "sanity": "^4.13.0",
-    "sanity-plugin-documents-pane": "^3.0.0",
-    "styled-components": "^6.1.18"
-  },
-  "devDependencies": {
-    "@sanity/blueprints": "0.3.0",
-    "@sanity/eslint-config-studio": "^5.0.2",
-    "@sanity/functions": "1.0.3",
-    "@types/react": "^19.1",
-    "eslint": "^9.28",
-    "prettier": "^3.5",
-    "typescript": "^5.8"
-  },
-  "prettier": {
-    "semi": false,
-    "printWidth": 100,
-    "bracketSpacing": false,
-    "singleQuote": true
-  }
+	"name": "day-one-content-operations",
+	"private": true,
+	"version": "1.0.0",
+	"main": "package.json",
+	"license": "UNLICENSED",
+	"scripts": {
+		"dev": "sanity dev",
+		"start": "sanity start",
+		"build": "sanity build",
+		"deploy": "sanity deploy",
+		"deploy-graphql": "sanity graphql deploy",
+		"predev": "pnpm run typegen --enforce-required-fields",
+		"prebuild": "pnpm run typegen --enforce-required-fields",
+		"typegen": "sanity schema extract && sanity typegen generate --enforce-required-fields"
+	},
+	"keywords": [
+		"sanity"
+	],
+	"dependencies": {
+		"@sanity/assist": "^5.0.2",
+		"@sanity/client": "^7.12.1",
+		"@sanity/icons": "^3.7.4",
+		"@sanity/ui": "^2.16.22",
+		"@sanity/vision": "^4.15.0",
+		"react": "^19.2.0",
+		"react-dom": "^19.2.0",
+		"sanity": "^4.15.0",
+		"sanity-plugin-documents-pane": "^3.0.1",
+		"styled-components": "^6.1.19"
+	},
+	"devDependencies": {
+		"@sanity/blueprints": "0.3.0",
+		"@sanity/eslint-config-studio": "^5.0.2",
+		"@sanity/functions": "1.0.3",
+		"@types/react": "^19.2.6",
+		"eslint": "^9.39.1",
+		"prettier": "^3.6.2",
+		"typescript": "^5.9.3"
+	},
+	"prettier": {
+		"semi": false,
+		"printWidth": 100,
+		"bracketSpacing": false,
+		"singleQuote": true
+	}
 }
