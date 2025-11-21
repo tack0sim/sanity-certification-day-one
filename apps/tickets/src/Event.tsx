@@ -6,29 +6,29 @@ import { Publish } from './Publish';
 import { TicketURL } from './TicketURL';
 
 type EventProjection = {
-	name: string | null;
-	tickets: string | null;
+  name: string | null;
+  tickets: string | null;
 };
 
 export function Event(props: DocumentHandle) {
-	const { data: event } = useDocumentProjection<EventProjection>({
-		...props,
-		projection: `{ name }`,
-	});
+  const { data: event } = useDocumentProjection<EventProjection>({
+    ...props,
+    projection: `{ name }`,
+  });
 
-	return (
-		<Card borderBottom paddingBottom={3}>
-			<Grid columns={2} gap={2}>
-				<Text>{event?.name || 'Untitled'}</Text>
-				<Flex gap={1}>
-					<Suspense fallback="Loading...">
-						<TicketURL {...props} />
-					</Suspense>
-					<Suspense fallback="Loading...">
-						<Publish {...props} />
-					</Suspense>
-				</Flex>
-			</Grid>
-		</Card>
-	);
+  return (
+    <Card borderBottom paddingBottom={3}>
+      <Grid columns={2} gap={2}>
+        <Text>{event?.name || 'Untitled'}</Text>
+        <Flex gap={1}>
+          <Suspense fallback="Loading...">
+            <TicketURL {...props} />
+          </Suspense>
+          <Suspense fallback="Loading...">
+            <Publish {...props} />
+          </Suspense>
+        </Flex>
+      </Grid>
+    </Card>
+  );
 }

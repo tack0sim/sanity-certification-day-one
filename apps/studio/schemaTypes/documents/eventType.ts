@@ -1,182 +1,172 @@
 import { CalendarIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { DoorsOpenInput } from '../components/DoorsOpenInput';
+import { Groups } from '../utils/groups';
 
 export const eventType = defineType({
-	name: 'event',
-	title: 'Event',
-	type: 'document',
-	icon: CalendarIcon,
-	groups: [
-		{ name: 'details', title: 'Details' },
-		{ name: 'editorial', title: 'Editorial' },
-	],
-	fieldsets: [
-		{
-			name: 'dates',
-			title: 'Dates',
-			options: { collapsible: true, columns: 2 },
-		},
-	],
-	fields: [
-		defineField({
-			name: 'name',
-			type: 'string',
-			group: 'details',
-		}),
-		defineField({
-			name: 'slug',
-			type: 'slug',
-			group: 'details',
-			options: { source: 'name' },
-			validation: (rule) =>
-				rule.required().error('Required to generate a page on the website'),
-			hidden: ({ document }) => !document?.name,
-			readOnly: ({ value, currentUser }) => {
-				if (!value) {
-					return false;
-				}
-				const isAdmin = currentUser?.roles.some(
-					(role) => role.name === 'administrator',
-				);
-				return !isAdmin;
-			},
-		}),
-		defineField({
-			name: 'headline',
-			group: 'details',
-			type: 'reference',
-			to: [{ type: 'artist' }],
-			// options: {
-			//   aiAssist: {
-			//     embeddingsIndex: 'artist',
-			//   },
-			// },
-		}),
-		defineField({
-			name: 'eventType',
-			type: 'string',
-			group: 'details',
-			deprecated: {
-				reason: 'Use the "Event Format" field instead.',
-			},
-			readOnly: true,
-			options: {
-				list: ['in-person', 'virtual'],
-				layout: 'radio',
-			},
-			hidden: true,
-		}),
-		defineField({
-			name: 'format',
-			title: 'Event Format',
-			type: 'string',
-			group: 'details',
-			validation: (rule) => rule.required(),
-			options: {
-				list: ['in-person', 'virtual'],
-				layout: 'radio',
-			},
-		}),
-		defineField({
-			name: 'venue',
-			type: 'reference',
-			to: [{ type: 'venue' }],
-			hidden: ({ value, document }) => !value && document?.format === 'virtual',
-			validation: (rule) =>
-				rule.custom((value, context) => {
-					if (value && context?.document?.format === 'virtual') {
-						return 'Only in-person events can have a venue';
-					}
-					return true;
-				}),
-			group: 'details',
-			// options: {
-			//   aiAssist: {
-			//     embeddingsIndex: 'venue',
-			//   },
-			// },
-		}),
-		defineField({
-			name: 'date',
-			type: 'datetime',
-			group: 'details',
-		}),
-		defineField({
-			name: 'doorsOpen',
-			description: 'Number of minutes before the start time for admission',
-			type: 'number',
-			initialValue: 60,
-			group: 'details',
-			components: {
-				input: DoorsOpenInput,
-			},
-		}),
-		defineField({
-			name: 'image',
-			group: ['details', 'editorial'],
-			type: 'image',
-		}),
-		defineField({
-			name: 'details',
-			group: ['details', 'editorial'],
-			type: 'array',
-			of: [{ type: 'block' }],
-			validation: (rule) =>
-				rule
-					.min(500)
-					.max(1000)
-					.warning(
-						'The Details field should have between 500 and 1000 characters',
-					),
-		}),
-		defineField({
-			name: 'tickets',
-			group: 'details',
-			type: 'url',
-		}),
-		defineField({
-			name: 'firstPublished',
-			title: 'First published',
-			type: 'datetime',
-			group: 'details',
-			description: 'Automatically set when first published',
-			readOnly: true,
-			fieldset: 'dates',
-		}),
-		defineField({
-			name: 'createdAt',
-			title: 'Created at',
-			type: 'datetime',
-			group: 'details',
-			fieldset: 'dates',
-		}),
-	],
-	preview: {
-		select: {
-			name: 'name',
-			venue: 'venue.name',
-			artist: 'headline.name',
-			date: 'date',
-			image: 'image',
-		},
-		prepare({ name, venue, artist, date, image }) {
-			const nameFormatted = name || 'Untitled event';
-			const dateFormatted = date
-				? new Date(date).toLocaleDateString(undefined, {
-						month: 'short',
-						day: 'numeric',
-						year: 'numeric',
-						hour: 'numeric',
-						minute: 'numeric',
-					})
-				: '';
+  name: 'event',
+  title: 'Event',
+  type: 'document',
+  icon: CalendarIcon,
+  groups: [{ name: 'details', title: 'Details' }, { name: 'editorial', title: 'Editorial' }, ...Groups],
+  fieldsets: [
+    {
+      name: 'dates',
+      title: 'Dates',
+      options: { collapsible: true, columns: 2 },
+    },
+  ],
+  fields: [
+    defineField({
+      name: 'name',
+      type: 'string',
+      group: 'details',
+    }),
+    defineField({
+      name: 'slug',
+      type: 'slug',
+      group: 'details',
+      options: { source: 'name' },
+      validation: (rule) => rule.required().error('Required to generate a page on the website'),
+      hidden: ({ document }) => !document?.name,
+      readOnly: ({ value, currentUser }) => {
+        if (!value) {
+          return false;
+        }
+        const isAdmin = currentUser?.roles.some((role) => role.name === 'administrator');
+        return !isAdmin;
+      },
+    }),
+    defineField({
+      name: 'headline',
+      group: 'details',
+      type: 'reference',
+      to: [{ type: 'artist' }],
+      // options: {
+      //   aiAssist: {
+      //     embeddingsIndex: 'artist',
+      //   },
+      // },
+    }),
+    defineField({
+      name: 'eventType',
+      type: 'string',
+      group: 'details',
+      deprecated: {
+        reason: 'Use the "Event Format" field instead.',
+      },
+      readOnly: true,
+      options: {
+        list: ['in-person', 'virtual'],
+        layout: 'radio',
+      },
+      hidden: true,
+    }),
+    defineField({
+      name: 'format',
+      title: 'Event Format',
+      type: 'string',
+      group: 'details',
+      validation: (rule) => rule.required(),
+      options: {
+        list: ['in-person', 'virtual'],
+        layout: 'radio',
+      },
+    }),
+    defineField({
+      name: 'venue',
+      type: 'reference',
+      to: [{ type: 'venue' }],
+      hidden: ({ value, document }) => !value && document?.format === 'virtual',
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          if (value && context?.document?.format === 'virtual') {
+            return 'Only in-person events can have a venue';
+          }
+          return true;
+        }),
+      group: 'details',
+      // options: {
+      //   aiAssist: {
+      //     embeddingsIndex: 'venue',
+      //   },
+      // },
+    }),
+    defineField({
+      name: 'date',
+      type: 'datetime',
+      group: 'details',
+    }),
+    defineField({
+      name: 'doorsOpen',
+      description: 'Number of minutes before the start time for admission',
+      type: 'number',
+      initialValue: 60,
+      group: 'details',
+      components: {
+        input: DoorsOpenInput,
+      },
+    }),
+    defineField({
+      name: 'image',
+      group: ['details', 'editorial'],
+      type: 'image',
+    }),
+    defineField({
+      name: 'details',
+      group: ['details', 'editorial'],
+      type: 'array',
+      of: [{ type: 'block' }],
+      validation: (rule) =>
+        rule.min(500).max(1000).warning('The Details field should have between 500 and 1000 characters'),
+    }),
+    defineField({
+      name: 'tickets',
+      group: 'details',
+      type: 'url',
+    }),
+    defineField({
+      name: 'firstPublished',
+      title: 'First published',
+      type: 'datetime',
+      group: 'details',
+      description: 'Automatically set when first published',
+      readOnly: true,
+      fieldset: 'dates',
+    }),
+    defineField({
+      name: 'createdAt',
+      title: 'Created at',
+      type: 'datetime',
+      group: 'details',
+      fieldset: 'dates',
+    }),
+  ],
+  preview: {
+    select: {
+      name: 'name',
+      venue: 'venue.name',
+      artist: 'headline.name',
+      date: 'date',
+      image: 'image',
+    },
+    prepare({ name, venue, artist, date, image }) {
+      const nameFormatted = name || 'Untitled event';
+      const dateFormatted = date
+        ? new Date(date).toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })
+        : '';
 
-			return {
-				title: artist ? `${nameFormatted} (${artist})` : nameFormatted,
-				subtitle: venue ? `${dateFormatted} @ ${venue}` : dateFormatted,
-				media: image || CalendarIcon,
-			};
-		},
-	},
+      return {
+        title: artist ? `${nameFormatted} (${artist})` : nameFormatted,
+        subtitle: venue ? `${dateFormatted} @ ${venue}` : dateFormatted,
+        media: image || CalendarIcon,
+      };
+    },
+  },
 });

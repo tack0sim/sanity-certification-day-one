@@ -12,12 +12,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export function SanityUI({ children }: { children: React.ReactNode }) {
-	return (
-		<>
-			<GlobalStyle />
-			<ThemeProvider theme={theme}>
-				<ToastProvider>{children}</ToastProvider>
-			</ThemeProvider>
-		</>
-	);
+  return (
+    <>
+      <GlobalStyle />
+      <ThemeProvider theme={theme}>
+        <ToastProvider>{children}</ToastProvider>
+      </ThemeProvider>
+    </>
+  );
 }

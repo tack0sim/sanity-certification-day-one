@@ -1,11 +1,14 @@
-import type {StructureResolver} from 'sanity/structure'
+import type { StructureResolver } from 'sanity/structure';
+import { getSiteTitle } from '../lib/SITES';
 
-export const structure: StructureResolver = (S) =>
+const title = getSiteTitle('Site 2');
+
+export const structureSite2: StructureResolver = (S) =>
   S.list()
     .id('root')
-    .title('Content')
+    .title(title)
     .items([
-      S.documentTypeListItem('page').title('Page'),
+      S.documentTypeListItem('pageSite2').title('Page'),
       S.divider().title('Events'),
       S.listItem()
         .title('Upcoming')
@@ -18,10 +21,4 @@ export const structure: StructureResolver = (S) =>
       S.divider().title('Artists and Venues'),
       S.documentTypeListItem('artist').title('Artists'),
       S.documentTypeListItem('venue').title('Venues'),
-    ])
-
-export const structureSite2: StructureResolver = (S) =>
-  S.list()
-    .id('root')
-    .title('Content')
-    .items([S.documentTypeListItem('page').title('Page')])
+    ]);

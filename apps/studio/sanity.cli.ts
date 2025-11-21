@@ -1,5 +1,5 @@
-import {defineCliConfig} from 'sanity/cli'
-import {dataset, projectId, studioHost} from './lib/env'
+import { defineCliConfig } from 'sanity/cli';
+import { dataset, projectId, studioHost } from './lib/env';
 
 export default defineCliConfig({
   api: {
@@ -14,4 +14,4 @@ export default defineCliConfig({
     appId: 'ssb668i65dfuhr0vcak6p8f7',
     autoUpdates: true,
   },
-})
+});

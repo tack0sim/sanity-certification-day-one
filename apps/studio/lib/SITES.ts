@@ -1,10 +1,11 @@
-export type siteName = 'site-1' | 'site-2'
+export type SiteName = 'site-1' | 'site-2';
+export type SiteTitle = 'Site 1' | 'Site 2';
 
 export type Site = {
-  name: siteName
-  title: string
-  url: string
-}
+  name: SiteName;
+  title: string;
+  url: string;
+};
 
 export const SITES: Site[] = [
   {
@@ -17,8 +18,14 @@ export const SITES: Site[] = [
     title: 'Site 2',
     url: 'http://localhost:3335',
   },
-]
+];
 
-export const getSite = (siteName: siteName) => {
-  SITES.find((site) => site.name === siteName)
-}
+export const getSite = (siteName: SiteName) => {
+  SITES.find((site) => site.name === siteName);
+  return siteName as string;
+};
+
+export const getSiteTitle = (siteTitle: SiteTitle) => {
+  SITES.find((site) => site.title === siteTitle);
+  return siteTitle;
+};

@@ -8,16 +8,17 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "**/pnpm-lock.yaml",
-      "node_modules",
-      ".next",
-      "public"
+    "includes": [
+      "**",
+      "!!**/pnpm-lock.yaml",
+      "!!node_modules",
+      "!!.next",
+      "!!public"
     ]
   },
   "formatter": {
     "enabled": true,
-    "formatWithErrors": false,
+    "formatWithErrors": true,
     "indentStyle": "space",
     "indentWidth": 2,
     "lineEnding": "lf",
@@ -33,7 +34,12 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
-      "semicolon": "asNeeded"
+      "lineWidth": 120
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": false
     }
   },
   "assist": {
@@ -42,6 +48,11 @@
       "source": {
         "organizeImports": "on"
       }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }
