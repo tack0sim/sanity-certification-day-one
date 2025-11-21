@@ -6,6 +6,9 @@ export const pageSite1 = defineType({
   title: 'Page',
   type: 'document',
   groups: Groups,
+  options: {
+    crossSite: false,
+  },
   preview: {
     select: {
       title: 'title',

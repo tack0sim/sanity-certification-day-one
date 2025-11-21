@@ -6,4 +6,3 @@ import { pageSite2 } from './pageSite2';
 import { venueType } from './venueType';
 
 export const documents: SchemaTypeDefinition[] = [pageSite1, pageSite2, eventType, artistType, venueType];
-// export const documents: SchemaTypeDefinition[] = [pageSite1, eventType, artistType, venueType]

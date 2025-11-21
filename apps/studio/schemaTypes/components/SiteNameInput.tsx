@@ -1,21 +1,26 @@
-import { Box, Checkbox, Flex, Text } from '@sanity/ui';
+import { type ArrayOfPrimitivesInputProps, set, unset, type ArraySchemaType } from 'sanity';
 import { useCallback } from 'react';
-import { type ArrayOfPrimitivesInputProps, set, unset } from 'sanity';
+import { Box, Checkbox, Flex, Text } from '@sanity/ui';
 import { SITES, type Site, type SiteName } from '../../lib/SITES';
 
-export const SiteNameInput = (props: ArrayOfPrimitivesInputProps<string>) => {
+export const SiteNameInput = (
+  props: ArrayOfPrimitivesInputProps<string | boolean | number, ArraySchemaType<unknown>>,
+) => {
   const { value, onChange } = props;
 
   const handleChange = useCallback(
     (siteName: SiteName) => {
-      if (value?.includes(siteName)) {
-        const newValues = value?.filter((name) => name !== siteName);
+      const current = value ?? [];
+      if (current.includes(siteName)) {
+        const newValues = current.filter((name) => name !== siteName);
 
         if (newValues.length === 0) {
           onChange(unset());
         } else {
           onChange(set(newValues));
         }
+      } else {
+        onChange(set([...current, siteName]));
       }
     },
     [onChange, value],
@@ -24,7 +29,7 @@ export const SiteNameInput = (props: ArrayOfPrimitivesInputProps<string>) => {
   return (
     <Box>
       {SITES.map((site: Site) => {
-        const isChecked = value?.includes(site.name) as boolean;
+        const isChecked = (value ?? []).some((v) => v === site.name);
 
         return (
           <Flex key={site.name} as="label" align="center" style={{ border: site ? '1px solid' : '' }}>

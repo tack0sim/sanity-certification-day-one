@@ -21,11 +21,11 @@ export const SITES: Site[] = [
 ];
 
 export const getSite = (siteName: SiteName) => {
-  SITES.find((site) => site.name === siteName);
-  return siteName as string;
+  const site = SITES.find((s) => s.name === siteName);
+  return site?.name ?? String(siteName);
 };
 
-export const getSiteTitle = (siteTitle: SiteTitle) => {
-  SITES.find((site) => site.title === siteTitle);
-  return siteTitle;
+export const getSiteTitle = (site: SiteTitle) => {
+  const siteFound = SITES.find((s) => s.title === site);
+  return siteFound ? siteFound.title : String(site);
 };

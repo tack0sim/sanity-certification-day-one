@@ -5,7 +5,9 @@ import { documents } from './documents';
 import { objects } from './objects';
 import { Group } from './utils/groups';
 
-const modifiedDocuments: SchemaTypeDefinition[] = documents.map((doc) => {
+export const documentSchemas = Object.values(documents);
+
+const modifiedDocuments: SchemaTypeDefinition[] = [...documentSchemas].map((doc) => {
   const documents = doc as DocumentDefinition;
   let fields: FieldDefinition[] = documents.fields ?? [];
 
@@ -15,15 +17,12 @@ const modifiedDocuments: SchemaTypeDefinition[] = documents.map((doc) => {
       title: 'Sites',
       type: 'array',
       of: [{ type: 'string' }],
-      // options: {
-      //   crossSite: false,
-      // },
       group: Group.sites,
       components: {
         input: SiteNameInput,
       },
       validation: (rule) =>
-        rule.custom((value, context) => {
+        rule.custom((value) => {
           if (!documents?.options?.crossSite && value && value.length > 1) {
             return 'The document can only be assigned to one site!';
           }

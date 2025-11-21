@@ -1,10 +1,16 @@
 import type { StructureResolver } from 'sanity/structure';
-import { getSiteTitle } from '../lib/SITES';
+import { documentTypeListItem } from './utils/documentTypeListItem';
+import { pageSite1 } from '../schemaTypes/documents/pageSite1';
+import { getSiteTitle, type SiteName } from '../lib/SITES';
 
+const site: SiteName = 'site-1';
 const title = getSiteTitle('Site 1');
 
-export const structureSite1: StructureResolver = (S, context) =>
-  S.list()
+export const structureSite1: StructureResolver = (S, context) => {
+  const structureProps = { S, context, site };
+
+  return S.list()
     .id('root')
     .title(title)
-    .items([S.documentTypeListItem('pageSite1').title('Page')]);
+    .items([documentTypeListItem(structureProps, { ...pageSite1 })]);
+};
