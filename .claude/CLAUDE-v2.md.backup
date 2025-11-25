@@ -1,0 +1,616 @@
+# AI Assistant Guidelines for Day One Content Operations
+
+**Purpose**: This file provides coding standards and best practices for AI assistants working with this Sanity Studio + Next.js monorepo.
+
+---
+
+## Project Context
+
+**Tech Stack**:
+- **Sanity Studio 4.15.0** - Multi-workspace CMS
+- **Next.js 16.0.0** - App Router frontend
+- **TypeScript 5.9.3** - Strict mode enabled
+- **React 19.2.0** - UI framework
+- **pnpm workspaces** - Monorepo management
+- **Biome 2.3.6** - Formatting and linting
+
+**Architecture**:
+- Multi-site content management with automatic `sites` field injection
+- Type generation from Studio schemas to Web frontend
+- Live preview with Visual Editing
+- Page builder system with modular blocks
+- GROQ queries for content fetching
+
+---
+
+## TypeScript Rules (CRITICAL)
+
+### 1. Never Use `any` Type
+```typescript
+// ❌ NEVER DO THIS
+const handleChange = (value: any) => { ... }
+
+// ✅ ALWAYS DO THIS
+interface HandleChangeProps {
+  value: string | number;
+  fieldName: string;
+}
+const handleChange = ({ value, fieldName }: HandleChangeProps) => { ... }
+```
+
+### 2. Avoid Variable Shadowing
+```typescript
+// ❌ NEVER shadow imports
+import { getSite } from './SITES';
+const basePath = (getSite: string) => `/${getSite}`; // BAD: shadows import
+
+// ✅ ALWAYS use different names
+import { getSite } from './SITES';
+const basePath = (siteName: string) => `/${siteName}`; // GOOD
+```
+
+### 3. Prefer Interfaces Over Types
+```typescript
+// ✅ For object shapes, use interfaces
+interface DocumentSchema {
+  name: string;
+  title: string;
+  fields: FieldDefinition[];
+}
+
+// ✅ Use types for unions and primitives
+type SiteName = 'site-1' | 'site-2';
+```
+
+### 4. Type Assertions Require Validation
+```typescript
+// ❌ Unsafe type assertion
+const doc = schema as DocumentDefinition;
+
+// ✅ Type assertion with guard
+const doc = schema as DocumentDefinition;
+if (!doc.fields) {
+  console.warn(`Schema ${doc.name} has no fields`);
+  return schema;
+}
+```
+
+### 5. Use Generated Types from Studio
+```typescript
+// ✅ Import generated types from Studio typegen
+import type { HOMEPAGE_EVENTS_QUERYResult } from '@/sanity/types';
+
+// ✅ Use Extract for discriminated unions
+type HeroBlock = Extract<
+  NonNullable<PAGE_QUERY_SITE_1Result['pageBuilder']>[number],
+  { _type: 'hero' }
+>;
+```
+
+---
+
+## Sanity Studio Patterns
+
+### Schema Definition
+```typescript
+// ✅ Use defineType and defineField
+import { defineType, defineField } from 'sanity';
+
+export const eventType = defineType({
+  name: 'event',
+  title: 'Event',
+  type: 'document',
+  fields: [
+    defineField({
+      name: 'title',
+      type: 'string',
+      validation: (rule) => rule.required()
+    })
+  ]
+});
+```
+
+### Multi-Site Architecture
+**Key Concept**: All document schemas automatically get a `sites` field injected via `apps/studio/schemaTypes/index.ts:10-42`.
+
+```typescript
+// ✅ Enable multi-site content
+export const sharedContentType = defineType({
+  name: 'sharedContent',
+  type: 'document',
+  options: {
+    crossSite: true  // Allows assignment to multiple sites
+  },
+  fields: [...]
+});
+
+// ✅ Single-site content (default)
+export const siteSpecificType = defineType({
+  name: 'siteSpecific',
+  type: 'document',
+  // No crossSite option = must belong to exactly one site
+  fields: [...]
+});
+```
+
+### Custom Input Components
+```typescript
+// ✅ Use Sanity's set/unset for input changes
+import { set, unset, type ArrayOfPrimitivesInputProps } from 'sanity';
+import { useCallback } from 'react';
+
+export const CustomInput = (props: ArrayOfPrimitivesInputProps) => {
+  const { value, onChange } = props;
+
+  const handleChange = useCallback((newValue: string) => {
+    if (newValue) {
+      onChange(set(newValue));
+    } else {
+      onChange(unset());
+    }
+  }, [onChange]);
+
+  return <input value={value || ''} onChange={(e) => handleChange(e.target.value)} />;
+};
+```
+
+### Structure Tool Customization
+```typescript
+// ✅ Use StructureResolver type
+import type { StructureResolver } from 'sanity/structure';
+
+export const structureSite1: StructureResolver = (S, context) => {
+  return S.list()
+    .id('root')
+    .title('Site 1')
+    .items([
+      S.documentTypeListItem('page').title('Pages'),
+      S.divider(),
+      S.listItem()
+        .title('Upcoming Events')
+        .child(
+          S.documentList()
+            .title('Upcoming')
+            .filter('_type == "event" && date >= now()')
+            .defaultOrdering([{ field: 'date', direction: 'asc' }])
+        )
+    ]);
+};
+```
+
+---
+
+## Type Generation Workflow (CRITICAL)
+
+### The Flow
+```
+1. Define schemas in apps/studio/schemaTypes/
+   ↓
+2. Update GROQ queries in apps/web/src/sanity/lib/queries.ts
+   ↓
+3. Run: cd apps/studio && pnpm typegen
+   ↓
+4. Types generated in apps/web/src/sanity/types.ts
+   ↓
+5. Import types in Web components
+```
+
+### Rules
+1. **Never edit** `apps/web/src/sanity/types.ts` manually - it's auto-generated
+2. **Always run** `pnpm typegen` in Studio after schema changes
+3. `predev` and `prebuild` hooks auto-run typegen
+4. Web app TypeScript errors after schema changes? Run `pnpm typegen`
+
+### Configuration
+**File**: `apps/studio/sanity-typegen.json`
+- Scans Web queries: `../web/src/**/*.{ts,tsx,js,jsx}`
+- Outputs to: `../web/src/sanity/types.ts`
+- Generates query result types based on GROQ projections
+
+---
+
+## GROQ Query Best Practices
+
+### Structure
+```typescript
+// ✅ Use groq template tag and export queries
+import { groq } from 'next-sanity';
+
+export const EVENT_QUERY = groq`
+  *[_type == "event" && slug.current == $slug][0] {
+    _id,
+    _type,
+    title,
+    slug,
+    date,
+    artists[]-> {
+      _id,
+      name,
+      photo
+    },
+    venue-> {
+      _id,
+      name,
+      city
+    }
+  }
+`;
+```
+
+### Query Patterns
+```typescript
+// ✅ Use parameters for dynamic values
+const query = groq`*[_type == $type && slug.current == $slug][0]`;
+const params = { type: 'event', slug: 'my-event' };
+
+// ✅ Project only needed fields
+const query = groq`*[_type == "event"] { _id, title, date }`;
+
+// ✅ Use references with ->
+const query = groq`*[_type == "event"] {
+  title,
+  venue-> { name, city }
+}`;
+
+// ✅ Filter by site
+const query = groq`*[_type == "page" && $site in sites]`;
+```
+
+---
+
+## Next.js 16 Patterns
+
+### Caching with `use cache`
+```typescript
+// ✅ Use Next.js 16 cache directives
+'use cache: private'
+
+import { cacheLife } from 'next/cache';
+
+export default async function Page() {
+  cacheLife({ stale: 60, revalidate: 300 });
+
+  const data = await sanityFetch({ query: MY_QUERY });
+
+  return <div>{/* render */}</div>;
+}
+```
+
+### Draft Mode Integration
+```typescript
+// ✅ Check draft mode for preview
+import { draftMode } from 'next/headers';
+
+const perspective = draftMode().isEnabled ? 'previewDrafts' : 'published';
+
+const data = await sanityFetch({
+  query: MY_QUERY,
+  perspective
+});
+```
+
+---
+
+## Code Quality Standards
+
+### Variable Naming
+```typescript
+// ✅ Use auxiliary verbs for booleans
+const isLoading = true;
+const hasError = false;
+const canEdit = user.role === 'admin';
+
+// ✅ Descriptive function names
+const fetchUpcomingEvents = async () => { ... };
+const validateSiteSelection = (sites: string[]) => { ... };
+```
+
+### Error Handling
+```typescript
+// ✅ Early returns with guard clauses
+function processDocument(doc: DocumentDefinition) {
+  if (!doc) {
+    throw new Error('Document is required');
+  }
+
+  if (!doc.fields || doc.fields.length === 0) {
+    console.warn(`Document ${doc.name} has no fields`);
+    return null;
+  }
+
+  // Main logic here
+  return processFields(doc.fields);
+}
+
+// ✅ Use custom error types
+class SchemaValidationError extends Error {
+  constructor(
+    message: string,
+    public schemaName: string,
+    public fieldName?: string
+  ) {
+    super(message);
+    this.name = 'SchemaValidationError';
+  }
+}
+```
+
+### Function Structure
+```typescript
+// ✅ Use function keyword for pure functions
+function calculateDoorTime(eventDate: string, hoursEarly: number): string {
+  const date = new Date(eventDate);
+  date.setHours(date.getHours() - hoursEarly);
+  return date.toISOString();
+}
+
+// ✅ Use arrow functions for callbacks
+const handleSiteChange = useCallback((siteName: SiteName) => {
+  // callback logic
+}, [dependencies]);
+```
+
+---
+
+## Multi-Workspace Configuration
+
+### Workspace Setup
+**File**: `apps/studio/sanity.config.ts:16-73`
+
+```typescript
+// ✅ Shared config pattern
+const sharedConfig: SingleWorkspace = {
+  projectId,
+  dataset,
+  schema,
+};
+
+const sharedPlugins: PluginOptions[] = [
+  visionTool(),
+];
+
+// ✅ Workspace-specific config
+const site1Config: WorkspaceOptions = {
+  ...sharedConfig,
+  name: 'site-1',
+  title: 'Site 1',
+  basePath: '/site-1',
+  plugins: [
+    structureTool({ structure: structureSite1 }),
+    presentationTool({ resolve, previewUrl: {...} }),
+    ...sharedPlugins
+  ]
+};
+```
+
+### Site Configuration
+**File**: `apps/studio/lib/SITES.ts`
+
+```typescript
+// ✅ Single source of truth for site metadata
+interface Site {
+  name: SiteName;
+  title: string;
+  url: string;
+}
+
+export const SITES: Site[] = [
+  { name: 'site-1', title: 'Site 1', url: 'http://localhost:3334' },
+  { name: 'site-2', title: 'Site 2', url: 'http://localhost:3335' }
+];
+```
+
+---
+
+## Page Builder System
+
+### Block Schema Definition
+```typescript
+// ✅ Define block as object type
+import { defineType, defineField } from 'sanity';
+
+export const heroBlock = defineType({
+  name: 'hero',
+  title: 'Hero Section',
+  type: 'object',  // Blocks are objects, not documents
+  fields: [
+    defineField({
+      name: 'title',
+      type: 'string',
+      validation: (rule) => rule.required()
+    }),
+    defineField({
+      name: 'image',
+      type: 'image',
+      options: { hotspot: true }
+    })
+  ]
+});
+```
+
+### Block Rendering
+```typescript
+// ✅ Type-safe block mapper
+import type { PAGE_QUERY_SITE_1Result } from '@/sanity/types';
+
+interface PageBuilderProps {
+  content: PAGE_QUERY_SITE_1Result;
+}
+
+export function PageBuilder({ content }: PageBuilderProps) {
+  return (
+    <>
+      {content?.pageBuilder?.map((block) => {
+        switch (block._type) {
+          case 'hero':
+            return <Hero key={block._key} {...block} />;
+          case 'gallery':
+            return <Gallery key={block._key} {...block} />;
+          default:
+            return <div key={block._key}>Unknown block: {block._type}</div>;
+        }
+      })}
+    </>
+  );
+}
+```
+
+---
+
+## Environment Variables
+
+### Required Variables
+
+#### Studio (`apps/studio/.env.local`)
+```bash
+SANITY_STUDIO_PROJECT_ID=your_project_id
+SANITY_STUDIO_DATASET=production
+SANITY_STUDIO_HOSTNAME=https://your-studio.sanity.studio
+SANITY_STUDIO_FRONTEND_HOST=http://localhost:3000
+```
+
+#### Web (`apps/web/.env.local`)
+```bash
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_READ_TOKEN=your_read_token
+SANITY_STUDIO_URL=http://localhost:3334
+SANITY_REVALIDATE_SECRET=your_webhook_secret
+```
+
+### Validation Pattern
+```typescript
+// ✅ Validate at startup
+if (!process.env.SANITY_STUDIO_PROJECT_ID) {
+  throw new Error('Missing SANITY_STUDIO_PROJECT_ID environment variable');
+}
+
+export const projectId = process.env.SANITY_STUDIO_PROJECT_ID;
+```
+
+**Critical**: Studio and Web must use matching `PROJECT_ID` and `DATASET`.
+
+---
+
+## Common Development Tasks
+
+### Adding a New Document Type
+1. Create schema in `apps/studio/schemaTypes/documents/newType.ts`
+2. Export from `apps/studio/schemaTypes/documents/index.ts`
+3. Run `cd apps/studio && pnpm typegen`
+4. The `sites` field is automatically injected
+
+### Adding a Page Builder Block
+1. Create schema in `apps/studio/schemaTypes/blocks/newBlock.ts`
+2. Export from `apps/studio/schemaTypes/index.ts`
+3. Update GROQ query in `apps/web/src/sanity/lib/queries.ts`
+4. Run `cd apps/studio && pnpm typegen`
+5. Create component in `apps/web/src/app/components/blocks/newBlock.tsx`
+6. Add case to `page-builder.tsx` switch statement
+
+### Debugging Type Issues
+```bash
+# 1. Schema changed but types not updating?
+cd apps/studio
+pnpm typegen
+
+# 2. Still having issues? Clean build
+cd apps/studio
+rm -rf .next dist
+pnpm build
+
+# 3. Verify types were generated
+cat apps/web/src/sanity/types.ts | grep "YourQueryName"
+```
+
+---
+
+## Code Quality Checks
+
+### Before Committing
+```bash
+# Run Biome formatter and linter
+pnpm biome
+
+# Check TypeScript compilation
+cd apps/studio && tsc --noEmit
+cd apps/web && tsc --noEmit
+
+# Ensure types are up to date
+cd apps/studio && pnpm typegen
+```
+
+### Common Issues to Avoid
+1. ❌ Variable shadowing (function names, imports, constants)
+2. ❌ Using `any` type instead of proper interfaces
+3. ❌ Type assertions without validation guards
+4. ❌ Editing generated `types.ts` file manually
+5. ❌ Forgetting to run `pnpm typegen` after schema changes
+6. ❌ Mismatched PROJECT_ID between Studio and Web
+7. ❌ Hardcoded values instead of using SITES configuration
+8. ❌ Dead code in conditionals (e.g., `site ? 'value' : ''` when site is always truthy)
+
+---
+
+## File Structure References
+
+### Key Files
+- `apps/studio/sanity.config.ts` - Multi-workspace configuration
+- `apps/studio/schemaTypes/index.ts:10-42` - Sites field injection logic
+- `apps/studio/lib/SITES.ts` - Site metadata configuration
+- `apps/web/src/sanity/lib/queries.ts` - All GROQ queries
+- `apps/web/src/sanity/lib/live.ts` - sanityFetch with draft mode
+- `apps/web/src/sanity/types.ts` - Generated types (DO NOT EDIT)
+
+### Common Patterns
+- Schema definitions: `apps/studio/schemaTypes/documents/*.ts`
+- Page builder blocks: `apps/studio/schemaTypes/blocks/*.ts`
+- Structure customization: `apps/studio/structure/*.ts`
+- Custom inputs: `apps/studio/schemaTypes/components/*.tsx`
+- Block renderers: `apps/web/src/app/components/blocks/*.tsx`
+
+---
+
+## Best Practices Summary
+
+### DO
+✅ Use TypeScript interfaces for all object shapes
+✅ Run `pnpm typegen` after every schema change
+✅ Validate environment variables at startup
+✅ Use guard clauses for early returns
+✅ Keep structure patterns consistent across workspaces
+✅ Use descriptive variable names with auxiliary verbs
+✅ Import generated types from `@/sanity/types`
+✅ Use `groq` template tag for queries
+✅ Follow the type generation workflow
+✅ Run `pnpm biome` before committing
+
+### DON'T
+❌ Never use `any` type - create proper interfaces
+❌ Never shadow imported functions or constants
+❌ Never edit `apps/web/src/sanity/types.ts` manually
+❌ Never use type assertions without validation
+❌ Never hardcode site names - use SITES configuration
+❌ Never commit with TypeScript errors
+❌ Never skip environment variable validation
+❌ Never use redundant type casts (e.g., `String()` on strings)
+❌ Never write dead code in conditionals
+
+---
+
+## Resources
+
+- **Sanity Docs**: https://www.sanity.io/docs
+- **GROQ Reference**: https://www.sanity.io/docs/groq
+- **Next.js 16 Docs**: https://nextjs.org/docs
+- **Multi-workspace Guide**: https://www.sanity.io/docs/workspaces
+- **Visual Editing**: https://www.sanity.io/docs/visual-editing
+
+---
+
+**Last Updated**: 2025-11-24
+**Project**: Day One Content Operations v1.0.0
+
+---
+
+*This file provides AI-specific guidance. For comprehensive documentation, see `/CLAUDE.md` (root level).*
