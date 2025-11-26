@@ -5,7 +5,7 @@
 import { useRouter } from 'next/navigation';
 import { useDraftModeEnvironment } from 'next-sanity/hooks';
 import { useTransition } from 'react';
-import { disableDraftMode } from '@/app/actions';
+import { disableDraftMode } from '@/app/lib/actions';
 
 export function DisableDraftMode() {
   const router = useRouter();

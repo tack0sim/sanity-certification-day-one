@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { sanityFetch } from '@/sanity/lib/live';
 import { PAGE_QUERY_SITE_1 } from '@/sanity/lib/queries';
-import { PageBuilder } from '../components/blocks/page-builder';
+import { PageBuilder } from '../../components/blocks/page-builder';
 
 export default async function PageRoute({ params }: { params: Promise<{ slug: string[] }> }) {
   'use cache: private';

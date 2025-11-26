@@ -1,0 +1,37 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "Bash(cat:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(pwd:*)",
+      "Bash(mkdir:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(git:*)",
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
+      "Bash(node:*)"
+    ],
+    "deny": [
+      "Read(.env*)",
+      "Write(production.*)",
+      "Bash(rm: *)"
+    ],
+    "defaultMode": "default",
+    "ask": []
+  },
+  "hooks": {
+    "beforeBash": "echo '$ {{command}}'",
+    "afterWrite": "biome check --write --files-ignore-unknown=true {{file}} 2>/dev/null || true"
+  },
+  "maxOutputTokens": 16000,
+  "bashTimeoutMs": 30000,
+  "env": {
+    "NODE_ENV": "development"
+  }
+}
