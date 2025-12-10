@@ -11,9 +11,9 @@
 	"dependencies": {
 		"@portabletext/editor": "^2.15.5",
 		"@sanity/image-url": "^1.2.0",
-		"next": "16.0.0",
+		"next": "16.0.7",
 		"next-sanity": "^11.6.2",
-		"react": "19.2.0",
+		"react": "19.2.1",
 		"react-dom": "19.2.0"
 	},
 	"devDependencies": {
