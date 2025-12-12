@@ -12,8 +12,8 @@ export default defineConfig({
   name: 'default',
   title: 'Day One Content Operations',
 
-  projectId: process.env.SANITY_STUDIO_PROJECT_ID,
-  dataset: process.env.SANITY_STUDIO_DATASET,
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID as string,
+  dataset: process.env.SANITY_STUDIO_DATASET as string,
   schema,
 
   plugins: [
